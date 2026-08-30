@@ -334,39 +334,6 @@ function ExploreSection({
   );
 }
 
-function FinalRecap({
-  mapPreviewUrl,
-  primaryMapsUrl,
-  googleMapsUrl,
-}: {
-  mapPreviewUrl: string;
-  primaryMapsUrl: string;
-  googleMapsUrl: string;
-}) {
-  return (
-    <section className="recap-section" aria-labelledby="recap-title">
-      <div className="content-shell recap-shell">
-        <header className="recap-header" data-reveal>
-          <p className="step-label">ONE MORE THING // THE ESSENTIALS</p>
-          <h2 id="recap-title">FREE FOOD.<br /><span>MEETING LOCATION.</span></h2>
-          <p>One last reminder before you go.</p>
-        </header>
-
-        <FoodHighlight className="food-card--recap" message="🍱 FREE FOOD AT HAWKERS." />
-
-        <LocationCard
-          headingId="recap-location-title"
-          label="MEETING POINT // QUICK RECAP"
-          mapPreviewUrl={mapPreviewUrl}
-          primaryMapsUrl={primaryMapsUrl}
-          googleMapsUrl={googleMapsUrl}
-          className="location-card--recap"
-        />
-      </div>
-    </section>
-  );
-}
-
 export default function ClubExperience() {
   const registrationSectionRef = useRef<HTMLElement>(null);
   const confirmationSectionRef = useRef<HTMLElement>(null);
@@ -677,12 +644,6 @@ export default function ClubExperience() {
       )}
 
       <ExploreSection registered={registered} onJoin={handleJoin} />
-
-      <FinalRecap
-        mapPreviewUrl={mapPreviewUrl}
-        primaryMapsUrl={primaryMapsUrl}
-        googleMapsUrl={googleMapsUrl}
-      />
 
       <footer className="site-footer global-footer">
         <span>{CLUB_CONFIG.clubName}</span>

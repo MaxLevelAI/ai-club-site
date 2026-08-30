@@ -675,60 +675,6 @@ h1 {
   box-shadow: 0 0 16px rgba(33, 255, 112, 0.14);
 }
 
-.recap-section {
-  position: relative;
-  padding: 64px 14px 18px;
-}
-
-.recap-section::before {
-  position: absolute;
-  top: 16px;
-  left: 50%;
-  width: min(calc(100% - 28px), 1040px);
-  height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(33, 255, 112, 0.5), transparent);
-  content: '';
-  transform: translateX(-50%);
-  box-shadow: 0 0 16px rgba(33, 255, 112, 0.14);
-}
-
-.recap-shell {
-  width: min(100%, 1040px);
-}
-
-.recap-header {
-  margin-bottom: 18px;
-  border: 1px solid rgba(91, 255, 141, 0.24);
-  border-radius: 20px;
-  background:
-    linear-gradient(125deg, rgba(33, 255, 112, 0.12), transparent 52%),
-    rgba(3, 13, 8, 0.92);
-  padding: 30px 24px;
-}
-
-.recap-header h2 {
-  margin: 8px 0 0;
-  font-family: var(--font-geist-mono), monospace;
-  font-size: clamp(2rem, 10vw, 4.25rem);
-  letter-spacing: -0.075em;
-  line-height: 0.92;
-}
-
-.recap-header h2 span { color: var(--matrix); }
-
-.recap-header > p:last-child {
-  margin: 16px 0 0;
-  color: #b9cebf;
-}
-
-.food-card--recap {
-  min-height: 285px;
-}
-
-.location-card--recap {
-  margin-top: 14px;
-}
-
 .explore-shell {
   width: min(100%, 1040px);
 }
@@ -1240,8 +1186,6 @@ h1 {
   .admin-panel { padding: 36px; }
   .food-card { min-height: 300px; }
   .explore-section { padding: 84px 20px 24px; }
-  .recap-section { padding: 84px 20px 24px; }
-  .recap-header { padding: 42px; }
   .explore-header { padding: 48px 44px 38px; }
   .topic-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .topic-card--wide {
