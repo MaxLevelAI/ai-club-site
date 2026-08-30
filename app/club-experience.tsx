@@ -129,6 +129,87 @@ async function requestRegistrationCount() {
   return typeof result.count === 'number' ? result.count : 0;
 }
 
+function FoodHighlight({
+  className = '',
+  message = 'YES, THERE WILL BE FOOD.',
+}: {
+  className?: string;
+  message?: string;
+}) {
+  return (
+    <article className={`food-card ${className}`.trim()}>
+      <img
+        src="/hawkers-menu.jpg"
+        alt="A spread of dishes from the Hawkers menu"
+        width="1920"
+        height="1280"
+        loading="lazy"
+        decoding="async"
+      />
+      <div className="food-card-shade" aria-hidden="true" />
+      <div className="food-card-content">
+        <strong>{message}</strong>
+        <a href="https://eathawkers.com/menus/dining/" target="_blank" rel="noreferrer">
+          VIEW HAWKERS MENU <span aria-hidden="true">↗</span>
+        </a>
+      </div>
+    </article>
+  );
+}
+
+function LocationCard({
+  headingId,
+  label,
+  mapPreviewUrl,
+  primaryMapsUrl,
+  googleMapsUrl,
+  className = '',
+}: {
+  headingId: string;
+  label: string;
+  mapPreviewUrl: string;
+  primaryMapsUrl: string;
+  googleMapsUrl: string;
+  className?: string;
+}) {
+  return (
+    <article className={`location-card ${className}`.trim()} aria-labelledby={headingId}>
+      <div className="section-heading-row">
+        <div>
+          <p className="step-label">{label}</p>
+          <h2 id={headingId}>WHERE WE MEET</h2>
+        </div>
+        <span className="location-ping" aria-hidden="true" />
+      </div>
+
+      <div className="venue-block">
+        <p className="venue-name">{CLUB_CONFIG.venueName}</p>
+        <p className="venue-area">{CLUB_CONFIG.venueArea}</p>
+        <p className="venue-note">{CLUB_CONFIG.venueDescription}</p>
+      </div>
+
+      <div className="map-frame">
+        <iframe
+          src={mapPreviewUrl}
+          title={`Map showing ${CLUB_CONFIG.venueName}, ${CLUB_CONFIG.venueArea}`}
+          loading="lazy"
+          referrerPolicy="no-referrer-when-downgrade"
+        />
+      </div>
+
+      <div className="directions-stack">
+        <a className="primary-button directions-button" href={primaryMapsUrl} target="_blank" rel="noreferrer">
+          <span>GET DIRECTIONS</span>
+          <span aria-hidden="true">↗</span>
+        </a>
+        <a className="secondary-button" href={googleMapsUrl} target="_blank" rel="noreferrer">
+          OPEN IN GOOGLE MAPS
+        </a>
+      </div>
+    </article>
+  );
+}
+
 const TOPICS = [
   {
     number: '01',
@@ -246,24 +327,41 @@ function ExploreSection({
             </p>
           </section>
 
-          <article className="food-card food-card--explore">
-            <img
-              src="/hawkers-menu.jpg"
-              alt="A spread of dishes from the Hawkers menu"
-              width="1920"
-              height="1280"
-              loading="lazy"
-              decoding="async"
-            />
-            <div className="food-card-shade" aria-hidden="true" />
-            <div className="food-card-content">
-              <strong>YES, THERE WILL BE FOOD.</strong>
-              <a href="https://eathawkers.com/menus/dining/" target="_blank" rel="noreferrer">
-                VIEW HAWKERS MENU <span aria-hidden="true">↗</span>
-              </a>
-            </div>
-          </article>
+          <FoodHighlight className="food-card--explore" />
         </div>
+      </div>
+    </section>
+  );
+}
+
+function FinalRecap({
+  mapPreviewUrl,
+  primaryMapsUrl,
+  googleMapsUrl,
+}: {
+  mapPreviewUrl: string;
+  primaryMapsUrl: string;
+  googleMapsUrl: string;
+}) {
+  return (
+    <section className="recap-section" aria-labelledby="recap-title">
+      <div className="content-shell recap-shell">
+        <header className="recap-header" data-reveal>
+          <p className="step-label">ONE MORE THING // THE ESSENTIALS</p>
+          <h2 id="recap-title">FREE FOOD.<br /><span>MEETING LOCATION.</span></h2>
+          <p>One last reminder before you go.</p>
+        </header>
+
+        <FoodHighlight className="food-card--recap" message="🍱 FREE FOOD AT HAWKERS." />
+
+        <LocationCard
+          headingId="recap-location-title"
+          label="MEETING POINT // QUICK RECAP"
+          mapPreviewUrl={mapPreviewUrl}
+          primaryMapsUrl={primaryMapsUrl}
+          googleMapsUrl={googleMapsUrl}
+          className="location-card--recap"
+        />
       </div>
     </section>
   );
@@ -443,7 +541,7 @@ export default function ClubExperience() {
 
   const googleMapsUrl = getGoogleMapsUrl();
   const primaryMapsUrl = isIOS ? getAppleMapsUrl() : googleMapsUrl;
-  const mapPreviewUrl = `https://www.google.com/maps?q=${encodeURIComponent(getDestination())}&output=embed`;
+  const mapPreviewUrl = `https://www.google.com/maps?q=${encodeURIComponent(getDestination())}&output=embed&maptype=roadmap`;
 
   return (
     <main className="site-shell">
@@ -543,6 +641,11 @@ export default function ClubExperience() {
               </button>
             </article>
 
+            <FoodHighlight
+              className="food-card--confirmation"
+              message="🍱 THERE WILL BE FOOD!"
+            />
+
             <button
               className="registration-count-button"
               type="button"
@@ -561,46 +664,25 @@ export default function ClubExperience() {
               </span>
             </button>
 
-            <article className="location-card" aria-labelledby="location-title">
-              <div className="section-heading-row">
-                <div>
-                  <p className="step-label">MEETING POINT // 01</p>
-                  <h2 id="location-title">WHERE WE MEET</h2>
-                </div>
-                <span className="location-ping" aria-hidden="true" />
-              </div>
-
-              <div className="venue-block">
-                <p className="venue-name">{CLUB_CONFIG.venueName}</p>
-                <p className="venue-area">{CLUB_CONFIG.venueArea}</p>
-                <p className="venue-note">{CLUB_CONFIG.venueDescription}</p>
-              </div>
-
-              <div className="map-frame">
-                <iframe
-                  src={mapPreviewUrl}
-                  title={`Map showing ${CLUB_CONFIG.venueName}, ${CLUB_CONFIG.venueArea}`}
-                  loading="lazy"
-                  referrerPolicy="no-referrer-when-downgrade"
-                />
-              </div>
-
-              <div className="directions-stack">
-                <a className="primary-button directions-button" href={primaryMapsUrl} target="_blank" rel="noreferrer">
-                  <span>GET DIRECTIONS</span>
-                  <span aria-hidden="true">↗</span>
-                </a>
-                <a className="secondary-button" href={googleMapsUrl} target="_blank" rel="noreferrer">
-                  OPEN IN GOOGLE MAPS
-                </a>
-              </div>
-            </article>
+            <LocationCard
+              headingId="location-title"
+              label="MEETING POINT // 01"
+              mapPreviewUrl={mapPreviewUrl}
+              primaryMapsUrl={primaryMapsUrl}
+              googleMapsUrl={googleMapsUrl}
+            />
 
           </div>
         </section>
       )}
 
       <ExploreSection registered={registered} onJoin={handleJoin} />
+
+      <FinalRecap
+        mapPreviewUrl={mapPreviewUrl}
+        primaryMapsUrl={primaryMapsUrl}
+        googleMapsUrl={googleMapsUrl}
+      />
 
       <footer className="site-footer global-footer">
         <span>{CLUB_CONFIG.clubName}</span>
