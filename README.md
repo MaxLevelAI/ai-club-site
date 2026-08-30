@@ -2,7 +2,7 @@
 
 A fast, mobile-first registration page for **AI CLUB — For Student Success**. Students enter only their name, receive an immediate confirmation, see the meeting details, and can open directions. A protected organizer page lists registrations.
 
-Below the fast event flow, a mobile-first “What We’ll Explore” section introduces nine evolving AI topics, a first-meeting teaser, and an “I’m In” action that returns visitors to registration or their confirmation. Its text-free visual atlas is stored at `public/ai-topics-atlas.webp` and displayed as nine optimized crops so phones download one lightweight image instead of nine separate assets.
+Below the fast event flow, a mobile-first “What We’ll Explore” section introduces five AI topics, a first-meeting teaser, and an “I’m In” action that returns visitors to registration or their confirmation. Its text-free visual atlas is stored at `public/ai-topics-atlas.webp` and displayed as optimized crops so phones download one lightweight image instead of separate assets.
 
 ## 1. Run the site locally
 

@@ -158,18 +158,6 @@ const TOPICS = [
   },
   {
     number: '05',
-    art: 'apis',
-    title: 'APIs',
-    text: 'Learn how programs communicate—and how developers put AI inside websites, apps, games, and other software.',
-  },
-  {
-    number: '06',
-    art: 'mcp',
-    title: 'MCP',
-    text: 'Explore how AI connects to tools and information through standards like the Model Context Protocol. Think of it as a universal connector.',
-  },
-  {
-    number: '07',
     art: 'tools',
     title: 'CREATE YOUR OWN AI TOOLS',
     text: 'See something useful online? Understand the idea, recreate the functionality, and improve it for what YOU need.',
@@ -177,28 +165,6 @@ const TOPICS = [
     note: 'Study useful ideas—not proprietary code, branding, or copyrighted material.',
     wide: true,
   },
-  {
-    number: '08',
-    art: 'media',
-    title: 'CREATE WITH AI',
-    text: 'Explore AI image generation, design, video, audio, and creative tools. Turn an idea into visual content.',
-  },
-  {
-    number: '09',
-    art: 'future',
-    title: 'WHAT COMES NEXT?',
-    text: 'AI is evolving incredibly quickly. We will explore new tools, breakthroughs, and ideas as they appear—including things that may not exist yet when the club starts.',
-    wide: true,
-  },
-] as const;
-
-const FIRST_MEETING_IDEAS = [
-  'See how AI learns',
-  'Build an AI-powered study tool',
-  'Create a massive practice question bank',
-  'See how neural networks work',
-  'Learn what APIs and MCP actually are',
-  'Explore what AI agents can do',
 ] as const;
 
 function ExploreSection({
@@ -212,7 +178,7 @@ function ExploreSection({
     <section className="explore-section" aria-labelledby="explore-title">
       <div className="content-shell explore-shell">
         <header className="explore-header" data-reveal>
-          <div className="explore-index" aria-hidden="true">// 09 SIGNALS</div>
+          <div className="explore-index" aria-hidden="true">// 05 SIGNALS</div>
           <p className="step-label">THE CLUB // BEYOND THE PROMPT</p>
           <h2 id="explore-title">WHAT WE&apos;LL<br /><span>EXPLORE</span></h2>
           <p className="explore-intro">
@@ -275,11 +241,6 @@ function ExploreSection({
               break down how the technology works, and figure out how students
               can use AI more effectively.
             </p>
-            <ul className="meeting-ideas">
-              {FIRST_MEETING_IDEAS.map((idea, index) => (
-                <li key={idea}><span>{String(index + 1).padStart(2, '0')}</span>{idea}</li>
-              ))}
-            </ul>
             <p className="evolving-note">
               <span aria-hidden="true" /> NOT A FIXED CURRICULUM. BUILT TO EVOLVE.
             </p>

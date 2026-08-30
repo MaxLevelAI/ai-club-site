@@ -1020,32 +1020,6 @@ h1 {
   line-height: 1.6;
 }
 
-.meeting-ideas {
-  display: grid;
-  gap: 0;
-  margin: 24px 0 0;
-  padding: 0;
-  border-top: 1px solid rgba(98, 255, 145, 0.16);
-  list-style: none;
-}
-
-.meeting-ideas li {
-  display: grid;
-  grid-template-columns: 32px minmax(0, 1fr);
-  gap: 9px;
-  border-bottom: 1px solid rgba(98, 255, 145, 0.12);
-  color: #eafff0;
-  padding: 11px 2px;
-  font-size: 0.86rem;
-}
-
-.meeting-ideas li span {
-  color: var(--matrix);
-  font-family: var(--font-geist-mono), monospace;
-  font-size: 0.6rem;
-  letter-spacing: 0.09em;
-}
-
 .evolving-note {
   display: flex;
   align-items: center;
