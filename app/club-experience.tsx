@@ -129,7 +129,188 @@ async function requestRegistrationCount() {
   return typeof result.count === 'number' ? result.count : 0;
 }
 
+const TOPICS = [
+  {
+    number: '01',
+    art: 'learn',
+    title: 'USE AI TO LEARN BETTER',
+    text: 'Turn AI into a personal tutor. Create practice tests, question banks, study tools, explanations, and better ways to understand difficult subjects.',
+    wide: true,
+  },
+  {
+    number: '02',
+    art: 'build',
+    title: 'BUILD WITH AI',
+    text: 'Take an idea and turn it into something real. Build websites, apps, games, study tools, automations, and more—even while you are still learning to code.',
+  },
+  {
+    number: '03',
+    art: 'works',
+    title: 'HOW DOES AI ACTUALLY WORK?',
+    text: 'Go beyond just using ChatGPT. Explore neural networks, machine learning, tokens, training, models, and how AI learns patterns.',
+  },
+  {
+    number: '04',
+    art: 'agents',
+    title: 'AI THAT CAN DO THINGS',
+    text: 'Learn how AI can search, use tools, work with files, call APIs, and complete multi-step tasks. Meet the idea behind AI agents.',
+    wide: true,
+  },
+  {
+    number: '05',
+    art: 'apis',
+    title: 'APIs',
+    text: 'Learn how programs communicate—and how developers put AI inside websites, apps, games, and other software.',
+  },
+  {
+    number: '06',
+    art: 'mcp',
+    title: 'MCP',
+    text: 'Explore how AI connects to tools and information through standards like the Model Context Protocol. Think of it as a universal connector.',
+  },
+  {
+    number: '07',
+    art: 'tools',
+    title: 'CREATE YOUR OWN AI TOOLS',
+    text: 'See something useful online? Understand the idea, recreate the functionality, and improve it for what YOU need.',
+    examples: ['Question banks', 'Flashcards', 'Study websites', 'Personal tutors', 'Productivity tools'],
+    note: 'Study useful ideas—not proprietary code, branding, or copyrighted material.',
+    wide: true,
+  },
+  {
+    number: '08',
+    art: 'media',
+    title: 'CREATE WITH AI',
+    text: 'Explore AI image generation, design, video, audio, and creative tools. Turn an idea into visual content.',
+  },
+  {
+    number: '09',
+    art: 'future',
+    title: 'WHAT COMES NEXT?',
+    text: 'AI is evolving incredibly quickly. We will explore new tools, breakthroughs, and ideas as they appear—including things that may not exist yet when the club starts.',
+    wide: true,
+  },
+] as const;
+
+const FIRST_MEETING_IDEAS = [
+  'See how AI learns',
+  'Build an AI-powered study tool',
+  'Create a massive practice question bank',
+  'See how neural networks work',
+  'Learn what APIs and MCP actually are',
+  'Explore what AI agents can do',
+] as const;
+
+function ExploreSection({
+  registered,
+  onJoin,
+}: {
+  registered: boolean;
+  onJoin: () => void;
+}) {
+  return (
+    <section className="explore-section" aria-labelledby="explore-title">
+      <div className="content-shell explore-shell">
+        <header className="explore-header" data-reveal>
+          <div className="explore-index" aria-hidden="true">// 09 SIGNALS</div>
+          <p className="step-label">THE CLUB // BEYOND THE PROMPT</p>
+          <h2 id="explore-title">WHAT WE&apos;LL<br /><span>EXPLORE</span></h2>
+          <p className="explore-intro">
+            AI is changing how we learn, create, build, and solve problems.
+            This club is about understanding how to actually use it.
+          </p>
+          <div className="explore-scanline" aria-hidden="true"><span /></div>
+        </header>
+
+        <div className="topic-grid">
+          {TOPICS.map((topic) => (
+            <article
+              className={`topic-card${'wide' in topic && topic.wide ? ' topic-card--wide' : ''}`}
+              data-reveal
+              key={topic.number}
+            >
+              <div
+                className={`topic-visual topic-visual--${topic.art}`}
+                aria-hidden="true"
+              >
+                <span className="topic-corner topic-corner--top" />
+                <span className="topic-corner topic-corner--bottom" />
+              </div>
+              <div className="topic-copy">
+                <span className="topic-number">{topic.number}</span>
+                <h3>{topic.title}</h3>
+                <p>{topic.text}</p>
+                {'examples' in topic && (
+                  <ul className="topic-tags" aria-label="Example projects">
+                    {topic.examples.map((example) => <li key={example}>{example}</li>)}
+                  </ul>
+                )}
+                {'note' in topic && <p className="topic-note">{topic.note}</p>}
+              </div>
+            </article>
+          ))}
+        </div>
+
+        <section className="curiosity-panel" data-reveal>
+          <div className="curiosity-orbit" aria-hidden="true">
+            <i /><i /><i />
+          </div>
+          <div className="curiosity-copy">
+            <p className="step-label">OPEN INVITATION // ALL SKILL LEVELS</p>
+            <h2>YOU DON&apos;T NEED TO<br />ALREADY KNOW AI.</h2>
+            <p>You just need to be curious.</p>
+          </div>
+          <button className="primary-button curiosity-button" type="button" onClick={onJoin}>
+            <span>I&apos;M IN</span>
+            <span aria-hidden="true">{registered ? '↑' : '→'}</span>
+          </button>
+        </section>
+
+        <div className="first-meeting-grid" data-reveal>
+          <section className="meeting-teaser" aria-labelledby="meeting-teaser-title">
+            <p className="step-label">FIRST MEETING // A PREVIEW</p>
+            <h2 id="meeting-teaser-title">WHAT WILL WE<br />ACTUALLY DO?</h2>
+            <p className="meeting-teaser-intro">
+              At meetings we&apos;ll explore real AI tools, build things together,
+              break down how the technology works, and figure out how students
+              can use AI more effectively.
+            </p>
+            <ul className="meeting-ideas">
+              {FIRST_MEETING_IDEAS.map((idea, index) => (
+                <li key={idea}><span>{String(index + 1).padStart(2, '0')}</span>{idea}</li>
+              ))}
+            </ul>
+            <p className="evolving-note">
+              <span aria-hidden="true" /> NOT A FIXED CURRICULUM. BUILT TO EVOLVE.
+            </p>
+          </section>
+
+          <article className="food-card food-card--explore">
+            <img
+              src="/hawkers-menu.jpg"
+              alt="A spread of dishes from the Hawkers menu"
+              width="1920"
+              height="1280"
+              loading="lazy"
+              decoding="async"
+            />
+            <div className="food-card-shade" aria-hidden="true" />
+            <div className="food-card-content">
+              <strong>YES, THERE WILL BE FOOD.</strong>
+              <a href="https://eathawkers.com/menus/dining/" target="_blank" rel="noreferrer">
+                VIEW HAWKERS MENU <span aria-hidden="true">↗</span>
+              </a>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 export default function ClubExperience() {
+  const registrationSectionRef = useRef<HTMLElement>(null);
+  const confirmationSectionRef = useRef<HTMLElement>(null);
   const [name, setName] = useState('');
   const [error, setError] = useState('');
   const [registered, setRegistered] = useState(false);
@@ -170,6 +351,30 @@ export default function ClubExperience() {
   }, [registered]);
 
   useEffect(() => {
+    const elements = document.querySelectorAll<HTMLElement>('[data-reveal]');
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    if (reducedMotion || !('IntersectionObserver' in window)) {
+      elements.forEach((element) => element.classList.add('is-visible'));
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          entry.target.classList.add('is-visible');
+          observer.unobserve(entry.target);
+        });
+      },
+      { rootMargin: '0px 0px -9% 0px', threshold: 0.08 },
+    );
+
+    elements.forEach((element) => observer.observe(element));
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
     if (!registered) return;
     let active = true;
     setCountLoading(true);
@@ -204,6 +409,23 @@ export default function ClubExperience() {
     setError('');
     setRegistrationCount(null);
     setRegistered(false);
+    window.setTimeout(() => {
+      registrationSectionRef.current?.scrollIntoView({ behavior: 'smooth' });
+      document.getElementById('student-name')?.focus({ preventScroll: true });
+    }, 0);
+  };
+
+  const handleJoin = () => {
+    const target = registered
+      ? confirmationSectionRef.current
+      : registrationSectionRef.current;
+    target?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+    if (!registered) {
+      window.setTimeout(() => {
+        document.getElementById('student-name')?.focus({ preventScroll: true });
+      }, 450);
+    }
   };
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
@@ -268,7 +490,11 @@ export default function ClubExperience() {
       <div className="rain-overlay" aria-hidden="true" />
 
       {!registered ? (
-        <section className="registration-wrap screen-enter" aria-labelledby="registration-title">
+        <section
+          className="registration-wrap screen-enter"
+          aria-labelledby="registration-title"
+          ref={registrationSectionRef}
+        >
           <div className="registration-card">
             <header className="brand-lockup">
               <p className="brand-mark">{CLUB_CONFIG.clubName}</p>
@@ -316,7 +542,11 @@ export default function ClubExperience() {
           </div>
         </section>
       ) : (
-        <section className="confirmation-wrap screen-enter" aria-labelledby="confirmation-title">
+        <section
+          className="confirmation-wrap screen-enter"
+          aria-labelledby="confirmation-title"
+          ref={confirmationSectionRef}
+        >
           <div className="content-shell">
             <header className="confirmation-brand">
               <div>
@@ -370,24 +600,6 @@ export default function ClubExperience() {
               </span>
             </button>
 
-            <article className="food-card">
-              <img
-                src="/hawkers-menu.jpg"
-                alt="A spread of dishes from the Hawkers menu"
-                width="1920"
-                height="1280"
-                loading="lazy"
-                decoding="async"
-              />
-              <div className="food-card-shade" aria-hidden="true" />
-              <div className="food-card-content">
-                <strong><span aria-hidden="true">🍱</span> THERE WILL BE FOOD!</strong>
-                <a href="https://eathawkers.com/menus/dining/" target="_blank" rel="noreferrer">
-                  VIEW HAWKERS MENU <span aria-hidden="true">↗</span>
-                </a>
-              </div>
-            </article>
-
             <article className="location-card" aria-labelledby="location-title">
               <div className="section-heading-row">
                 <div>
@@ -423,13 +635,16 @@ export default function ClubExperience() {
               </div>
             </article>
 
-            <footer className="site-footer">
-              <span>{CLUB_CONFIG.clubName}</span>
-              <span>SEE YOU THERE.</span>
-            </footer>
           </div>
         </section>
       )}
+
+      <ExploreSection registered={registered} onJoin={handleJoin} />
+
+      <footer className="site-footer global-footer">
+        <span>{CLUB_CONFIG.clubName}</span>
+        <span>SEE YOU THERE.</span>
+      </footer>
     </main>
   );
 }
