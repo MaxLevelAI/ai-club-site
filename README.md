@@ -24,6 +24,8 @@ Each submission is stored in a Cloudflare D1 database with:
 
 The server database is the registration source of truth. The browser also stores a small `ai-club-registration` flag so the same browser goes straight to the confirmation screen on a return visit. No secret keys are placed in browser code.
 
+The confirmation screen fetches only the total number of registrations from `app/api/registration-count/route.ts`. Student names remain available only on the protected organizer page.
+
 The database setup is isolated in `db/registrations.ts`; the declarative schema is in `db/schema.ts`; the public write endpoint is `app/api/register/route.ts`.
 
 ## 3. Configure the database and organizer access
@@ -63,6 +65,8 @@ Edit `app/config.ts` and replace:
 - `appleMapsUrl`.
 
 Once the exact address is entered, the embedded preview and fallback directions use it. Supplying the exact Google and Apple Maps URLs gives the most precise one-tap experience.
+
+The current destination is Hawkers Windermere at 9100 Conroy Windermere Rd Ste 110, Windermere, FL 34786. The food image comes from the official [Hawkers dining menu](https://eathawkers.com/menus/dining/).
 
 ## 6. Change the date and time
 

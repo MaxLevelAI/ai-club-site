@@ -400,24 +400,132 @@ h1 {
   font-weight: 750;
 }
 
-.food-callout {
+.registration-count-button {
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 10px;
+  width: 100%;
+  min-height: 72px;
   margin: 14px 0;
   border: 1px solid rgba(105, 255, 150, 0.25);
   border-radius: 13px;
-  background: rgba(7, 24, 14, 0.92);
+  background:
+    linear-gradient(90deg, rgba(33, 255, 112, 0.1), transparent),
+    rgba(7, 24, 14, 0.94);
   color: #eefff3;
-  padding: 15px;
+  padding: 12px 16px;
   font-family: var(--font-geist-mono), monospace;
-  font-size: clamp(0.74rem, 3.6vw, 0.9rem);
-  letter-spacing: 0.07em;
+  text-align: left;
   box-shadow: 0 13px 38px rgba(0, 0, 0, 0.3);
+  cursor: pointer;
+  transition: border-color 160ms ease, background-color 160ms ease;
 }
 
-.food-callout span { font-size: 1.3rem; }
+.registration-count-button:hover { border-color: var(--matrix); }
+
+.registration-count-button:focus-visible {
+  outline: 3px solid white;
+  outline-offset: 3px;
+}
+
+.registration-count-button:disabled { cursor: wait; }
+
+.registration-count-number {
+  min-width: 55px;
+  color: var(--matrix);
+  font-size: 2rem;
+  font-weight: 900;
+  letter-spacing: -0.08em;
+  line-height: 1;
+}
+
+.registration-count-label {
+  flex: 1;
+  font-size: clamp(0.7rem, 3.4vw, 0.86rem);
+  font-weight: 800;
+  letter-spacing: 0.09em;
+}
+
+.registration-count-refresh {
+  display: grid;
+  width: 32px;
+  height: 32px;
+  place-items: center;
+  border: 1px solid rgba(92, 255, 141, 0.25);
+  border-radius: 50%;
+  color: #aaffc2;
+  font-size: 1rem;
+}
+
+.food-card {
+  position: relative;
+  min-height: 245px;
+  margin: 14px 0;
+  overflow: hidden;
+  border: 1px solid rgba(105, 255, 150, 0.28);
+  border-radius: 16px;
+  background: #07180d;
+  box-shadow: 0 18px 44px rgba(0, 0, 0, 0.38);
+}
+
+.food-card > img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 53%;
+}
+
+.food-card-shade {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg, rgba(1, 7, 3, 0.06) 20%, rgba(1, 8, 4, 0.9) 100%),
+    linear-gradient(90deg, rgba(0, 8, 3, 0.34), transparent 62%);
+}
+
+.food-card-content {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 20px;
+}
+
+.food-card-content strong {
+  max-width: 270px;
+  color: #fff;
+  font-family: var(--font-geist-mono), monospace;
+  font-size: clamp(1rem, 4.7vw, 1.35rem);
+  letter-spacing: 0.035em;
+  line-height: 1.18;
+  text-shadow: 0 3px 14px #000;
+}
+
+.food-card-content a {
+  flex: none;
+  border: 1px solid rgba(114, 255, 157, 0.5);
+  border-radius: 8px;
+  background: rgba(0, 15, 6, 0.88);
+  color: #d7ffe3;
+  padding: 10px 12px;
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 0.57rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-decoration: none;
+}
+
+.food-card-content a:hover { border-color: var(--matrix); }
+
+.food-card-content a:focus-visible {
+  outline: 3px solid white;
+  outline-offset: 3px;
+}
 
 .location-card { padding: 24px; }
 
@@ -487,27 +595,19 @@ h1 {
   background: #07120b;
 }
 
+.map-frame::after {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(145deg, rgba(0, 255, 89, 0.035), rgba(0, 0, 0, 0.12));
+  content: '';
+  pointer-events: none;
+}
+
 .map-frame iframe {
   width: 100%;
   height: 100%;
   border: 0;
-  filter: grayscale(0.75) invert(0.91) hue-rotate(92deg) brightness(0.78) contrast(1.2);
-}
-
-.map-pending {
-  position: absolute;
-  right: 10px;
-  bottom: 10px;
-  margin: 0;
-  border: 1px solid rgba(33, 255, 112, 0.48);
-  border-radius: 6px;
-  background: rgba(0, 8, 3, 0.92);
-  color: #baffce;
-  padding: 7px 9px;
-  font-family: var(--font-geist-mono), monospace;
-  font-size: 0.52rem;
-  font-weight: 750;
-  letter-spacing: 0.1em;
+  filter: grayscale(0.9) invert(0.94) hue-rotate(165deg) saturate(0.62) brightness(0.68) contrast(1.22);
 }
 
 .directions-stack {
@@ -673,6 +773,14 @@ h1 {
   .directions-stack { grid-template-columns: 1.45fr 1fr; }
   .admin-shell { padding: 48px 24px; }
   .admin-panel { padding: 36px; }
+  .food-card { min-height: 300px; }
+}
+
+@media (max-width: 460px) {
+  .food-card-content {
+    align-items: flex-start;
+    flex-direction: column;
+  }
 }
 
 @media (max-height: 650px) {

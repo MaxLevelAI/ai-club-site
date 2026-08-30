@@ -68,3 +68,12 @@ export async function listRegistrations() {
 
   return result.results ?? [];
 }
+
+export async function countRegistrations() {
+  await ensureRegistrationSchema();
+  const result = await database()
+    .prepare('SELECT COUNT(*) AS count FROM registrations')
+    .first<{ count: number }>();
+
+  return Number(result?.count ?? 0);
+}

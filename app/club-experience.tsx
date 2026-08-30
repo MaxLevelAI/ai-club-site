@@ -122,12 +122,21 @@ function createSessionKey() {
   return `${Date.now()}-${Math.random().toString(36).slice(2)}-${Math.random().toString(36).slice(2)}`;
 }
 
+async function requestRegistrationCount() {
+  const response = await fetch('/api/registration-count', { cache: 'no-store' });
+  if (!response.ok) throw new Error('Registration count is unavailable.');
+  const result = (await response.json()) as { count?: number };
+  return typeof result.count === 'number' ? result.count : 0;
+}
+
 export default function ClubExperience() {
   const [name, setName] = useState('');
   const [error, setError] = useState('');
   const [registered, setRegistered] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [isIOS, setIsIOS] = useState(false);
+  const [registrationCount, setRegistrationCount] = useState<number | null>(null);
+  const [countLoading, setCountLoading] = useState(false);
 
   useEffect(() => {
     setRegistered(Boolean(window.localStorage.getItem(LOCAL_REGISTRATION_KEY)));
@@ -147,12 +156,39 @@ export default function ClubExperience() {
     });
   }, [registered]);
 
+  useEffect(() => {
+    if (!registered) return;
+    let active = true;
+    setCountLoading(true);
+    requestRegistrationCount()
+      .then((count) => {
+        if (active) setRegistrationCount(count);
+      })
+      .catch(() => undefined)
+      .finally(() => {
+        if (active) setCountLoading(false);
+      });
+
+    return () => {
+      active = false;
+    };
+  }, [registered]);
+
+  const refreshRegistrationCount = async () => {
+    setCountLoading(true);
+    try {
+      setRegistrationCount(await requestRegistrationCount());
+    } finally {
+      setCountLoading(false);
+    }
+  };
+
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const normalizedName = name.trim().replace(/\s+/g, ' ');
 
     if (!normalizedName) {
-      setError('Please enter your first and last name.');
+      setError('Please enter your name.');
       return;
     }
 
@@ -226,14 +262,14 @@ export default function ClubExperience() {
               </div>
 
               <div className="field-group">
-                <label htmlFor="student-name">First and last name</label>
+                <label htmlFor="student-name">Your name</label>
                 <input
                   id="student-name"
                   name="name"
                   type="text"
                   autoComplete="name"
                   enterKeyHint="go"
-                  placeholder="First and Last Name"
+                  placeholder="First Name"
                   value={name}
                   onChange={(event) => setName(event.target.value)}
                   aria-describedby={error ? 'name-error' : undefined}
@@ -285,10 +321,41 @@ export default function ClubExperience() {
               </dl>
             </article>
 
-            <aside className="food-callout">
-              <span aria-hidden="true">🍱</span>
-              <strong>THERE WILL BE FOOD!</strong>
-            </aside>
+            <button
+              className="registration-count-button"
+              type="button"
+              onClick={refreshRegistrationCount}
+              disabled={countLoading}
+              aria-label="Refresh the number of people registered"
+            >
+              <span className="registration-count-number">
+                {registrationCount ?? '—'}
+              </span>
+              <span className="registration-count-label">
+                {registrationCount === 1 ? 'PERSON REGISTERED' : 'PEOPLE REGISTERED'}
+              </span>
+              <span className="registration-count-refresh" aria-hidden="true">
+                {countLoading ? '…' : '↻'}
+              </span>
+            </button>
+
+            <article className="food-card">
+              <img
+                src="/hawkers-menu.jpg"
+                alt="A spread of dishes from the Hawkers menu"
+                width="1920"
+                height="1280"
+                loading="lazy"
+                decoding="async"
+              />
+              <div className="food-card-shade" aria-hidden="true" />
+              <div className="food-card-content">
+                <strong><span aria-hidden="true">🍱</span> THERE WILL BE FOOD!</strong>
+                <a href="https://eathawkers.com/menus/dining/" target="_blank" rel="noreferrer">
+                  VIEW HAWKERS MENU <span aria-hidden="true">↗</span>
+                </a>
+              </div>
+            </article>
 
             <article className="location-card" aria-labelledby="location-title">
               <div className="section-heading-row">
@@ -312,9 +379,6 @@ export default function ClubExperience() {
                   loading="lazy"
                   referrerPolicy="no-referrer-when-downgrade"
                 />
-                {!isConfigured(CLUB_CONFIG.address) && (
-                  <p className="map-pending">EXACT ADDRESS COMING SOON</p>
-                )}
               </div>
 
               <div className="directions-stack">
