@@ -26,6 +26,8 @@ The server database is the registration source of truth. The browser also stores
 
 The confirmation screen fetches only the total number of registrations from `app/api/registration-count/route.ts`. Student names remain available only on the protected organizer page.
 
+`preExistingRegistrationCount` in `app/config.ts` is added to the live database total so registrations collected outside this website can be represented. It is currently set to `4`, making the displayed total `5` when one online registration exists. Set it to `0` to display only database registrations.
+
 The database setup is isolated in `db/registrations.ts`; the declarative schema is in `db/schema.ts`; the public write endpoint is `app/api/register/route.ts`.
 
 ## 3. Configure the database and organizer access

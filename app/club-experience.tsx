@@ -139,7 +139,20 @@ export default function ClubExperience() {
   const [countLoading, setCountLoading] = useState(false);
 
   useEffect(() => {
-    setRegistered(Boolean(window.localStorage.getItem(LOCAL_REGISTRATION_KEY)));
+    const resetRequested =
+      new URLSearchParams(window.location.search).get('register') === '1';
+
+    if (resetRequested) {
+      window.localStorage.removeItem(LOCAL_REGISTRATION_KEY);
+      window.sessionStorage.removeItem(SESSION_KEY);
+      window.sessionStorage.removeItem(SESSION_SUBMITTED_KEY);
+      window.history.replaceState({}, '', window.location.pathname);
+    }
+
+    setRegistered(
+      !resetRequested &&
+        Boolean(window.localStorage.getItem(LOCAL_REGISTRATION_KEY)),
+    );
     setIsIOS(
       /iPad|iPhone|iPod/.test(navigator.userAgent) ||
         (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1),
@@ -181,6 +194,16 @@ export default function ClubExperience() {
     } finally {
       setCountLoading(false);
     }
+  };
+
+  const returnToRegistration = () => {
+    window.localStorage.removeItem(LOCAL_REGISTRATION_KEY);
+    window.sessionStorage.removeItem(SESSION_KEY);
+    window.sessionStorage.removeItem(SESSION_SUBMITTED_KEY);
+    setName('');
+    setError('');
+    setRegistrationCount(null);
+    setRegistered(false);
   };
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
@@ -319,6 +342,14 @@ export default function ClubExperience() {
                   <dd>{CLUB_CONFIG.eventTime}</dd>
                 </div>
               </dl>
+
+              <button
+                className="secondary-button signup-reset-button"
+                type="button"
+                onClick={returnToRegistration}
+              >
+                BACK TO SIGN-UP
+              </button>
             </article>
 
             <button
