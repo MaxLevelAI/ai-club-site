@@ -686,6 +686,7 @@ export default function ClubExperience() {
 
       <footer className="site-footer global-footer">
         <span>{CLUB_CONFIG.clubName}</span>
+        <a className="organizer-access" href="/admin">ORGANIZER ACCESS</a>
         <span>SEE YOU THERE.</span>
       </footer>
     </main>

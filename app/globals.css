@@ -687,6 +687,18 @@ h1 {
   letter-spacing: 0.12em;
 }
 
+.organizer-access {
+  color: inherit;
+  text-decoration: none;
+}
+
+.organizer-access:hover { color: var(--matrix-soft); }
+
+.organizer-access:focus-visible {
+  outline: 2px solid white;
+  outline-offset: 3px;
+}
+
 .global-footer {
   width: min(calc(100% - 28px), 1040px);
   margin: 0 auto;
