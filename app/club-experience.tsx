@@ -532,8 +532,8 @@ export default function ClubExperience() {
             <form className="registration-form" onSubmit={handleSubmit} noValidate>
               <div>
                 <p className="step-label">REGISTRATION // 01</p>
-                <h1 id="registration-title">WHAT&apos;S YOUR NAME?</h1>
-                <p className="form-hint">One name. That&apos;s it.</p>
+                <h1 id="registration-title">REGISTER NOW</h1>
+                <p className="form-hint">No pressure—registering just lets us know you&apos;re interested.</p>
               </div>
 
               <div className="field-group">
@@ -600,11 +600,12 @@ export default function ClubExperience() {
               </dl>
 
               <button
-                className="secondary-button signup-reset-button"
+                className="primary-button signup-reset-button"
                 type="button"
                 onClick={returnToRegistration}
               >
-                BACK TO SIGN-UP
+                <span>SIGN UP</span>
+                <span aria-hidden="true">→</span>
               </button>
             </article>
 
