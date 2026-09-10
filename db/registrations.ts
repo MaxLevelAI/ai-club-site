@@ -8,10 +8,22 @@ export type RegistrationRow = {
   registered_at: string;
 };
 
-// A Neon Postgres connection. Set DATABASE_URL to the connection string from
-// your Neon / Vercel Postgres database before using this.
+// A Neon Postgres connection. The connection string comes from DATABASE_URL,
+// but the Vercel/Neon integration may name it differently, so accept the
+// common variants too.
+function connectionString(): string | undefined {
+  return (
+    process.env.DATABASE_URL ||
+    process.env.POSTGRES_URL ||
+    process.env.DATABASE_URL_UNPOOLED ||
+    process.env.POSTGRES_URL_NON_POOLING ||
+    process.env.POSTGRES_PRISMA_URL ||
+    undefined
+  );
+}
+
 function sql() {
-  const url = process.env.DATABASE_URL;
+  const url = connectionString();
   if (!url) {
     throw new Error(
       'Registration database is unavailable. Set the DATABASE_URL environment variable to your Neon Postgres connection string.',
