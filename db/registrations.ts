@@ -12,14 +12,23 @@ export type RegistrationRow = {
 // but the Vercel/Neon integration may name it differently, so accept the
 // common variants too.
 function connectionString(): string | undefined {
-  return (
+  const named =
     process.env.DATABASE_URL ||
     process.env.POSTGRES_URL ||
     process.env.DATABASE_URL_UNPOOLED ||
     process.env.POSTGRES_URL_NON_POOLING ||
-    process.env.POSTGRES_PRISMA_URL ||
-    undefined
-  );
+    process.env.POSTGRES_PRISMA_URL;
+  if (named) return named;
+
+  // Fallback: whatever prefix the Vercel/Neon integration used (e.g.
+  // STORAGE_URL), find the first env value that is a Postgres connection
+  // string so the database is picked up regardless of the variable name.
+  for (const value of Object.values(process.env)) {
+    if (typeof value === 'string' && /^postgres(?:ql)?:\/\//.test(value)) {
+      return value;
+    }
+  }
+  return undefined;
 }
 
 function sql() {
