@@ -131,7 +131,7 @@ async function requestRegistrationCount() {
 
 function FoodHighlight({
   className = '',
-  message = 'YES, THERE WILL BE FOOD.',
+  message = 'LIGHT SNACKS PROVIDED.',
 }: {
   className?: string;
   message?: string;
@@ -610,7 +610,7 @@ export default function ClubExperience() {
 
             <FoodHighlight
               className="food-card--confirmation"
-              message="🍱 THERE WILL BE FOOD!"
+              message="LIGHT SNACKS PROVIDED."
             />
 
             <button
