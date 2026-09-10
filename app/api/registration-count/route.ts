@@ -14,9 +14,11 @@ export async function GET() {
     );
   } catch (error) {
     console.error('Registration count failed', error);
+    // Never fail the public counter. Fall back to the baseline so the site
+    // always shows at least the starting number instead of an error or dash.
     return NextResponse.json(
-      { error: 'Registration count is unavailable.' },
-      { status: 500, headers: { 'Cache-Control': 'no-store' } },
+      { count: CLUB_CONFIG.preExistingRegistrationCount },
+      { headers: { 'Cache-Control': 'no-store' } },
     );
   }
 }

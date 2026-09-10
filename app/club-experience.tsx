@@ -345,7 +345,9 @@ export default function ClubExperience() {
   const [signupOpen, setSignupOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [isIOS, setIsIOS] = useState(false);
-  const [registrationCount, setRegistrationCount] = useState<number | null>(null);
+  const [registrationCount, setRegistrationCount] = useState<number>(
+    CLUB_CONFIG.preExistingRegistrationCount,
+  );
   const [countLoading, setCountLoading] = useState(false);
 
   useEffect(() => {
@@ -495,6 +497,7 @@ export default function ClubExperience() {
       );
       setSignupOpen(false);
       setRegistered(true);
+      void refreshRegistrationCount();
     } catch (registrationError) {
       setError(
         registrationError instanceof Error
@@ -661,7 +664,7 @@ export default function ClubExperience() {
               aria-label="Refresh the number of people registered"
             >
               <span className="registration-count-number">
-                {registrationCount ?? '—'}
+                {registrationCount}
               </span>
               <span className="registration-count-label">
                 {registrationCount === 1 ? 'PERSON REGISTERED' : 'PEOPLE REGISTERED'}

@@ -11,9 +11,21 @@ function json(body: object, status = 200) {
 }
 
 export async function POST(request: Request) {
+  // Reject cross-site posts by comparing the browser's Origin header host with
+  // the request Host header. Both are public-facing values, so this works
+  // correctly behind Vercel's proxy (unlike comparing against request.url).
   const requestOrigin = request.headers.get('origin');
-  if (requestOrigin && requestOrigin !== new URL(request.url).origin) {
-    return json({ error: 'Invalid request origin.' }, 403);
+  if (requestOrigin) {
+    const host = request.headers.get('host');
+    let originHost: string | null = null;
+    try {
+      originHost = new URL(requestOrigin).host;
+    } catch {
+      originHost = null;
+    }
+    if (!originHost || !host || originHost !== host) {
+      return json({ error: 'Invalid request origin.' }, 403);
+    }
   }
 
   const contentLength = Number(request.headers.get('content-length') || 0);
