@@ -2,7 +2,26 @@ import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 import './globals.css';
 
-const siteUrl = process.env.SITE_URL ?? 'http://localhost:3000';
+function resolveSiteUrl(): string {
+  // Prefer an explicitly configured SITE_URL, then Vercel's own deployment
+  // domain, then localhost. Guard against empty or malformed values so the
+  // build never crashes on `new URL(...)`.
+  const configured = process.env.SITE_URL?.trim();
+  if (configured) {
+    try {
+      return new URL(configured).toString();
+    } catch {
+      // Ignore an invalid SITE_URL and fall back below.
+    }
+  }
+
+  const vercelUrl = process.env.VERCEL_URL?.trim();
+  if (vercelUrl) return `https://${vercelUrl}`;
+
+  return 'http://localhost:3000';
+}
+
+const siteUrl = resolveSiteUrl();
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
