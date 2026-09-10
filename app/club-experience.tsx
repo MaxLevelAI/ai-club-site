@@ -340,6 +340,7 @@ export default function ClubExperience() {
   const [name, setName] = useState('');
   const [error, setError] = useState('');
   const [registered, setRegistered] = useState(false);
+  const [signupOpen, setSignupOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [isIOS, setIsIOS] = useState(false);
   const [registrationCount, setRegistrationCount] = useState<number | null>(null);
@@ -401,7 +402,6 @@ export default function ClubExperience() {
   }, []);
 
   useEffect(() => {
-    if (!registered) return;
     let active = true;
     setCountLoading(true);
     requestRegistrationCount()
@@ -416,7 +416,7 @@ export default function ClubExperience() {
     return () => {
       active = false;
     };
-  }, [registered]);
+  }, []);
 
   const refreshRegistrationCount = async () => {
     setCountLoading(true);
@@ -427,14 +427,8 @@ export default function ClubExperience() {
     }
   };
 
-  const returnToRegistration = () => {
-    window.localStorage.removeItem(LOCAL_REGISTRATION_KEY);
-    window.sessionStorage.removeItem(SESSION_KEY);
-    window.sessionStorage.removeItem(SESSION_SUBMITTED_KEY);
-    setName('');
-    setError('');
-    setRegistrationCount(null);
-    setRegistered(false);
+  const openSignup = () => {
+    setSignupOpen(true);
     window.setTimeout(() => {
       registrationSectionRef.current?.scrollIntoView({ behavior: 'smooth' });
       document.getElementById('student-name')?.focus({ preventScroll: true });
@@ -442,16 +436,12 @@ export default function ClubExperience() {
   };
 
   const handleJoin = () => {
-    const target = registered
-      ? confirmationSectionRef.current
-      : registrationSectionRef.current;
-    target?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-
     if (!registered) {
-      window.setTimeout(() => {
-        document.getElementById('student-name')?.focus({ preventScroll: true });
-      }, 450);
+      openSignup();
+      return;
     }
+
+    confirmationSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
@@ -494,6 +484,7 @@ export default function ClubExperience() {
         LOCAL_REGISTRATION_KEY,
         JSON.stringify({ name: normalizedName, savedAt: new Date().toISOString() }),
       );
+      setSignupOpen(false);
       setRegistered(true);
     } catch (registrationError) {
       setError(
@@ -515,78 +506,35 @@ export default function ClubExperience() {
       <DigitalRain />
       <div className="rain-overlay" aria-hidden="true" />
 
-      {!registered ? (
-        <section
-          className="registration-wrap screen-enter"
-          aria-labelledby="registration-title"
-          ref={registrationSectionRef}
-        >
-          <div className="registration-card">
-            <header className="brand-lockup">
-              <p className="brand-mark">{CLUB_CONFIG.clubName}</p>
-              <p className="brand-subtitle">{CLUB_CONFIG.subtitle}</p>
-            </header>
-
-            <div className="signal-line" aria-hidden="true"><span /></div>
-
-            <form className="registration-form" onSubmit={handleSubmit} noValidate>
-              <div>
-                <p className="step-label">REGISTRATION // 01</p>
-                <h1 id="registration-title">REGISTER NOW</h1>
-                <p className="form-hint">No pressure—registering just lets us know you&apos;re interested.</p>
-              </div>
-
-              <div className="field-group">
-                <label htmlFor="student-name">Your name</label>
-                <input
-                  id="student-name"
-                  name="name"
-                  type="text"
-                  autoComplete="name"
-                  enterKeyHint="go"
-                  placeholder="First Name"
-                  value={name}
-                  onChange={(event) => setName(event.target.value)}
-                  aria-describedby={error ? 'name-error' : undefined}
-                  aria-invalid={Boolean(error)}
-                  maxLength={100}
-                  autoFocus
-                  disabled={submitting}
-                />
-                <p className="field-error" id="name-error" role="alert">{error}</p>
-              </div>
-
-              <button className="primary-button" type="submit" disabled={submitting}>
-                <span>{submitting ? 'SAVING…' : 'CONTINUE'}</span>
-                <span aria-hidden="true">→</span>
-              </button>
-            </form>
-
-            <p className="privacy-note">
-              <span aria-hidden="true">●</span> Your name is used only for club registration.
-            </p>
-          </div>
-        </section>
-      ) : (
-        <section
-          className="confirmation-wrap screen-enter"
-          aria-labelledby="confirmation-title"
-          ref={confirmationSectionRef}
-        >
-          <div className="content-shell">
+      <section
+        className="confirmation-wrap screen-enter"
+        aria-labelledby="confirmation-title"
+        ref={confirmationSectionRef}
+      >
+        <div className="content-shell">
             <header className="confirmation-brand">
               <div>
                 <p className="compact-brand">{CLUB_CONFIG.clubName}</p>
                 <p>{CLUB_CONFIG.subtitle}</p>
               </div>
-              <span className="status-chip"><i aria-hidden="true" /> REGISTERED</span>
+              <span className={`status-chip${registered ? '' : ' status-chip--pending'}`}>
+                <i aria-hidden="true" /> {registered ? 'REGISTERED' : 'NOT REGISTERED'}
+              </span>
             </header>
 
             <article className="confirmation-card">
-              <div className="success-icon" aria-hidden="true">✓</div>
-              <p className="step-label">REGISTRATION COMPLETE</p>
-              <h1 id="confirmation-title">YOU&apos;RE<br />REGISTERED.</h1>
-              <p className="welcome-copy">Welcome to AI Club.</p>
+              <div className={registered ? 'success-icon' : 'signup-icon'} aria-hidden="true">
+                {registered ? '✓' : '+'}
+              </div>
+              <p className="step-label">{registered ? 'REGISTRATION COMPLETE' : 'AI CLUB // STUDENT SUCCESS'}</p>
+              <h1 id="confirmation-title">
+                {registered ? <>YOU&apos;RE<br />REGISTERED.</> : <>REGISTER<br />NOW.</>}
+              </h1>
+              <p className="welcome-copy">
+                {registered
+                  ? 'Welcome to AI Club.'
+                  : 'No pressure—registering just lets us know you&apos;re interested.'}
+              </p>
 
               <dl className="event-grid">
                 <div>
@@ -599,15 +547,60 @@ export default function ClubExperience() {
                 </div>
               </dl>
 
-              <button
-                className="primary-button signup-reset-button"
-                type="button"
-                onClick={returnToRegistration}
-              >
-                <span>SIGN UP</span>
-                <span aria-hidden="true">→</span>
-              </button>
+              {!registered && (
+                <button className="primary-button signup-reset-button" type="button" onClick={openSignup}>
+                  <span>SIGN UP</span>
+                  <span aria-hidden="true">→</span>
+                </button>
+              )}
             </article>
+
+            {!registered && signupOpen && (
+              <section
+                className="registration-wrap registration-wrap--inline"
+                aria-labelledby="registration-title"
+                ref={registrationSectionRef}
+              >
+                <div className="registration-card">
+                  <form className="registration-form" onSubmit={handleSubmit} noValidate>
+                    <div>
+                      <p className="step-label">REGISTRATION // 01</p>
+                      <h2 id="registration-title">YOUR NAME</h2>
+                      <p className="form-hint">That&apos;s all we need.</p>
+                    </div>
+
+                    <div className="field-group">
+                      <label htmlFor="student-name">Your name</label>
+                      <input
+                        id="student-name"
+                        name="name"
+                        type="text"
+                        autoComplete="name"
+                        enterKeyHint="go"
+                        placeholder="First Name"
+                        value={name}
+                        onChange={(event) => setName(event.target.value)}
+                        aria-describedby={error ? 'name-error' : undefined}
+                        aria-invalid={Boolean(error)}
+                        maxLength={100}
+                        autoFocus
+                        disabled={submitting}
+                      />
+                      <p className="field-error" id="name-error" role="alert">{error}</p>
+                    </div>
+
+                    <button className="primary-button" type="submit" disabled={submitting}>
+                      <span>{submitting ? 'SAVING…' : 'CONTINUE'}</span>
+                      <span aria-hidden="true">→</span>
+                    </button>
+                  </form>
+
+                  <p className="privacy-note">
+                    <span aria-hidden="true">●</span> Your name is used only for club registration.
+                  </p>
+                </div>
+              </section>
+            )}
 
             <FoodHighlight
               className="food-card--confirmation"
@@ -640,9 +633,8 @@ export default function ClubExperience() {
               googleMapsUrl={googleMapsUrl}
             />
 
-          </div>
-        </section>
-      )}
+        </div>
+      </section>
 
       <ExploreSection registered={registered} onJoin={handleJoin} />
 
