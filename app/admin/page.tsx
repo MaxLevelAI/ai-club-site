@@ -103,6 +103,7 @@ export default async function AdminPage({
                   <th scope="col">PERSONAL EMAIL</th>
                   <th scope="col">DATE</th>
                   <th scope="col">TIME</th>
+                  <th scope="col"><span className="sr-only">Actions</span></th>
                 </tr>
               </thead>
               <tbody>
@@ -113,6 +114,18 @@ export default async function AdminPage({
                     <td>{registration.email ?? '—'}</td>
                     <td>{formatDate(registration.registered_at)}</td>
                     <td>{formatTime(registration.registered_at)}</td>
+                    <td className="registration-actions">
+                      <form method="post" action="/admin/delete">
+                        <input type="hidden" name="id" value={registration.id} />
+                        <button
+                          type="submit"
+                          className="registration-remove"
+                          aria-label={`Remove ${registration.name}`}
+                        >
+                          Remove
+                        </button>
+                      </form>
+                    </td>
                   </tr>
                 ))}
               </tbody>
