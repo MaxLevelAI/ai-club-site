@@ -17,7 +17,7 @@ export async function POST(request: Request) {
   }
 
   const contentLength = Number(request.headers.get('content-length') || 0);
-  if (contentLength > 2048) {
+  if (contentLength > 4096) {
     return json({ error: 'Request is too large.' }, 413);
   }
 
@@ -25,23 +25,42 @@ export async function POST(request: Request) {
   try {
     body = await request.json();
   } catch {
-    return json({ error: 'Please enter your name and try again.' }, 400);
+    return json({ error: 'Please complete the registration form and try again.' }, 400);
   }
 
   if (!body || typeof body !== 'object') {
-    return json({ error: 'Please enter your name and try again.' }, 400);
+    return json({ error: 'Please complete the registration form and try again.' }, 400);
   }
 
-  const candidate = body as { name?: unknown; sessionKey?: unknown };
+  const candidate = body as {
+    name?: unknown;
+    studentId?: unknown;
+    email?: unknown;
+    sessionKey?: unknown;
+  };
   const name = typeof candidate.name === 'string'
     ? candidate.name.trim().replace(/\s+/g, ' ')
     : '';
   const sessionKey = typeof candidate.sessionKey === 'string'
     ? candidate.sessionKey
     : '';
+  const studentId = typeof candidate.studentId === 'string'
+    ? candidate.studentId.trim()
+    : '';
+  const email = typeof candidate.email === 'string'
+    ? candidate.email.trim().toLowerCase()
+    : '';
 
   if (!name || name.length > 100 || /[\u0000-\u001F\u007F]/.test(name)) {
     return json({ error: 'Please enter a valid name.' }, 400);
+  }
+
+  if (!/^\d{4,20}$/.test(studentId)) {
+    return json({ error: 'Please enter a valid 480 number.' }, 400);
+  }
+
+  if (email.length > 254 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    return json({ error: 'Please enter a valid personal email.' }, 400);
   }
 
   if (!/^[A-Za-z0-9-]{20,128}$/.test(sessionKey)) {
@@ -49,7 +68,7 @@ export async function POST(request: Request) {
   }
 
   try {
-    const result = await saveRegistration(name, sessionKey);
+    const result = await saveRegistration(name, studentId, email, sessionKey);
     return json({ ok: true, created: result.created }, result.created ? 201 : 200);
   } catch (error) {
     console.error('Registration save failed', error);

@@ -3,6 +3,8 @@ import { env } from 'cloudflare:workers';
 export type RegistrationRow = {
   id: number;
   name: string;
+  student_id: string | null;
+  email: string | null;
   registered_at: string;
 };
 
@@ -43,14 +45,19 @@ export function ensureRegistrationSchema() {
   return schemaPromise;
 }
 
-export async function saveRegistration(name: string, sessionKey: string) {
+export async function saveRegistration(
+  name: string,
+  studentId: string,
+  email: string,
+  sessionKey: string,
+) {
   await ensureRegistrationSchema();
   const result = await database()
     .prepare(
-      `INSERT OR IGNORE INTO registrations (name, session_key, registered_at)
-       VALUES (?, ?, ?)`,
+      `INSERT OR IGNORE INTO registrations (name, student_id, email, session_key, registered_at)
+       VALUES (?, ?, ?, ?, ?)`,
     )
-    .bind(name, sessionKey, new Date().toISOString())
+    .bind(name, studentId, email, sessionKey, new Date().toISOString())
     .run();
 
   return { created: (result.meta.changes ?? 0) > 0 };
@@ -60,7 +67,7 @@ export async function listRegistrations() {
   await ensureRegistrationSchema();
   const result = await database()
     .prepare(
-      `SELECT id, name, registered_at
+      `SELECT id, name, student_id, email, registered_at
        FROM registrations
        ORDER BY registered_at DESC`,
     )

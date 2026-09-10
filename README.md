@@ -1,6 +1,6 @@
 # AI Club registration site
 
-A fast, mobile-first registration page for **AI CLUB — For Student Success**. Students enter only their name, receive an immediate confirmation, see the meeting details, and can open directions. A protected organizer page lists registrations.
+A fast, mobile-first registration page for **AI CLUB — For Student Success**. Students enter their name, 480 number, and personal email, receive an immediate confirmation, see the meeting details, and can open directions. A protected organizer page lists registrations.
 
 Below the fast event flow, a mobile-first “What We’ll Explore” section introduces five AI topics, a first-meeting teaser, and an “I’m In” action that returns visitors to registration or their confirmation. Its text-free visual atlas is stored at `public/ai-topics-atlas.webp` and displayed as optimized crops so phones download one lightweight image instead of separate assets.
 
@@ -21,6 +21,8 @@ The local Sites preview provides a test signed-in organizer account automaticall
 Each submission is stored in a Cloudflare D1 database with:
 
 - the student's name;
+- their 480 number;
+- their personal email;
 - an ISO-8601 registration timestamp;
 - a random browser-session key used only to prevent an accidental double submission.
 
@@ -47,11 +49,13 @@ Set `ADMIN_EMAILS` as a hosted runtime value before publishing. Multiple organiz
 
 Never put this setting or other private values in client-side files.
 
-## 4. View registered names
+## 4. View registrations
 
 Open `/admin` on the deployed site. After sign-in, an allowed organizer can see:
 
 - student name;
+- 480 number;
+- personal email;
 - registration date;
 - registration time.
 

@@ -338,6 +338,8 @@ export default function ClubExperience() {
   const registrationSectionRef = useRef<HTMLElement>(null);
   const confirmationSectionRef = useRef<HTMLElement>(null);
   const [name, setName] = useState('');
+  const [studentId, setStudentId] = useState('');
+  const [email, setEmail] = useState('');
   const [error, setError] = useState('');
   const [registered, setRegistered] = useState(false);
   const [signupOpen, setSignupOpen] = useState(false);
@@ -447,9 +449,11 @@ export default function ClubExperience() {
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const normalizedName = name.trim().replace(/\s+/g, ' ');
+    const normalizedStudentId = studentId.trim();
+    const normalizedEmail = email.trim().toLowerCase();
 
-    if (!normalizedName) {
-      setError('Please enter your name.');
+    if (!normalizedName || !normalizedStudentId || !normalizedEmail) {
+      setError('Please complete all fields.');
       return;
     }
 
@@ -471,7 +475,12 @@ export default function ClubExperience() {
       const response = await fetch('/api/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: normalizedName, sessionKey }),
+        body: JSON.stringify({
+          name: normalizedName,
+          studentId: normalizedStudentId,
+          email: normalizedEmail,
+          sessionKey,
+        }),
       });
 
       const result = (await response.json()) as { error?: string };
@@ -533,7 +542,7 @@ export default function ClubExperience() {
               <p className="welcome-copy">
                 {registered
                   ? 'Welcome to AI Club.'
-                  : 'No pressure—registering just lets us know you&apos;re interested.'}
+                  : 'No pressure—registering just lets us know you’re interested.'}
               </p>
 
               <dl className="event-grid">
@@ -589,6 +598,43 @@ export default function ClubExperience() {
                       <p className="field-error" id="name-error" role="alert">{error}</p>
                     </div>
 
+                    <div className="field-group">
+                      <label htmlFor="student-id">Your 480 number</label>
+                      <input
+                        id="student-id"
+                        name="studentId"
+                        type="text"
+                        inputMode="numeric"
+                        autoComplete="off"
+                        pattern="[0-9]*"
+                        placeholder="480 Number"
+                        value={studentId}
+                        onChange={(event) => setStudentId(event.target.value.replace(/\D/g, ''))}
+                        aria-describedby={error ? 'name-error' : undefined}
+                        aria-invalid={Boolean(error)}
+                        maxLength={20}
+                        disabled={submitting}
+                      />
+                    </div>
+
+                    <div className="field-group">
+                      <label htmlFor="student-email">Personal email</label>
+                      <input
+                        id="student-email"
+                        name="email"
+                        type="email"
+                        autoComplete="email"
+                        inputMode="email"
+                        placeholder="you@example.com"
+                        value={email}
+                        onChange={(event) => setEmail(event.target.value)}
+                        aria-describedby={error ? 'name-error' : undefined}
+                        aria-invalid={Boolean(error)}
+                        maxLength={254}
+                        disabled={submitting}
+                      />
+                    </div>
+
                     <button className="primary-button" type="submit" disabled={submitting}>
                       <span>{submitting ? 'SAVING…' : 'CONTINUE'}</span>
                       <span aria-hidden="true">→</span>
@@ -596,7 +642,7 @@ export default function ClubExperience() {
                   </form>
 
                   <p className="privacy-note">
-                    <span aria-hidden="true">●</span> Your name is used only for club registration.
+                    <span aria-hidden="true">●</span> Your details are used only for club registration and are not publicly visible.
                   </p>
                 </div>
               </section>

@@ -75,6 +75,8 @@ export default async function AdminPage() {
               <thead>
                 <tr>
                   <th scope="col">STUDENT NAME</th>
+                  <th scope="col">480 NUMBER</th>
+                  <th scope="col">PERSONAL EMAIL</th>
                   <th scope="col">DATE</th>
                   <th scope="col">TIME</th>
                 </tr>
@@ -83,6 +85,8 @@ export default async function AdminPage() {
                 {registrations.map((registration) => (
                   <tr key={registration.id}>
                     <td>{registration.name}</td>
+                    <td>{registration.student_id ?? '—'}</td>
+                    <td>{registration.email ?? '—'}</td>
                     <td>{formatDate(registration.registered_at)}</td>
                     <td>{formatTime(registration.registered_at)}</td>
                   </tr>

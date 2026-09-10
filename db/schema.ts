@@ -5,6 +5,8 @@ export const registrations = sqliteTable(
   {
     id: integer('id').primaryKey({ autoIncrement: true }),
     name: text('name').notNull(),
+    studentId: text('student_id'),
+    email: text('email'),
     sessionKey: text('session_key').notNull(),
     registeredAt: text('registered_at').notNull(),
   },
