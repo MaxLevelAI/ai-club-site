@@ -1167,6 +1167,19 @@ h1 {
   letter-spacing: 0.1em;
 }
 
+.admin-signout-button {
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+}
+
+.admin-login-form {
+  display: grid;
+  gap: 18px;
+  margin-top: 26px;
+}
+
 .registration-table-wrap {
   overflow-x: auto;
   border: 1px solid rgba(94, 255, 142, 0.2);

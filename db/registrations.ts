@@ -1,4 +1,4 @@
-import { env } from 'cloudflare:workers';
+import { neon } from '@neondatabase/serverless';
 
 export type RegistrationRow = {
   id: number;
@@ -8,38 +8,45 @@ export type RegistrationRow = {
   registered_at: string;
 };
 
-let schemaPromise: Promise<void> | null = null;
-
-function database() {
-  if (!env.DB) {
-    throw new Error('Registration database is unavailable.');
+// A Neon Postgres connection. Set DATABASE_URL to the connection string from
+// your Neon / Vercel Postgres database before using this.
+function sql() {
+  const url = process.env.DATABASE_URL;
+  if (!url) {
+    throw new Error(
+      'Registration database is unavailable. Set the DATABASE_URL environment variable to your Neon Postgres connection string.',
+    );
   }
-  return env.DB;
+  return neon(url);
 }
+
+let schemaPromise: Promise<void> | null = null;
 
 export function ensureRegistrationSchema() {
   if (!schemaPromise) {
     schemaPromise = (async () => {
-      const db = database();
-      await db.batch([
-        db.prepare(`
-          CREATE TABLE IF NOT EXISTS registrations (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            name TEXT NOT NULL,
-            session_key TEXT NOT NULL,
-            registered_at TEXT NOT NULL
-          )
-        `),
-        db.prepare(`
-          CREATE UNIQUE INDEX IF NOT EXISTS registrations_session_key_unique
-          ON registrations (session_key)
-        `),
-        db.prepare(`
-          CREATE INDEX IF NOT EXISTS idx_registrations_registered_at
-          ON registrations (registered_at)
-        `),
-      ]);
-      await db.prepare('PRAGMA optimize').run();
+      const db = sql();
+      await db`
+        CREATE TABLE IF NOT EXISTS registrations (
+          id SERIAL PRIMARY KEY,
+          name TEXT NOT NULL,
+          student_id TEXT,
+          email TEXT,
+          session_key TEXT NOT NULL,
+          registered_at TEXT NOT NULL
+        )
+      `;
+      // Backfill columns for databases created before student_id/email existed.
+      await db`ALTER TABLE registrations ADD COLUMN IF NOT EXISTS student_id TEXT`;
+      await db`ALTER TABLE registrations ADD COLUMN IF NOT EXISTS email TEXT`;
+      await db`
+        CREATE UNIQUE INDEX IF NOT EXISTS registrations_session_key_unique
+        ON registrations (session_key)
+      `;
+      await db`
+        CREATE INDEX IF NOT EXISTS idx_registrations_registered_at
+        ON registrations (registered_at)
+      `;
     })();
   }
   return schemaPromise;
@@ -52,35 +59,33 @@ export async function saveRegistration(
   sessionKey: string,
 ) {
   await ensureRegistrationSchema();
-  const result = await database()
-    .prepare(
-      `INSERT OR IGNORE INTO registrations (name, student_id, email, session_key, registered_at)
-       VALUES (?, ?, ?, ?, ?)`,
-    )
-    .bind(name, studentId, email, sessionKey, new Date().toISOString())
-    .run();
+  const db = sql();
+  const inserted = await db`
+    INSERT INTO registrations (name, student_id, email, session_key, registered_at)
+    VALUES (${name}, ${studentId}, ${email}, ${sessionKey}, ${new Date().toISOString()})
+    ON CONFLICT (session_key) DO NOTHING
+    RETURNING id
+  `;
 
-  return { created: (result.meta.changes ?? 0) > 0 };
+  return { created: inserted.length > 0 };
 }
 
-export async function listRegistrations() {
+export async function listRegistrations(): Promise<RegistrationRow[]> {
   await ensureRegistrationSchema();
-  const result = await database()
-    .prepare(
-      `SELECT id, name, student_id, email, registered_at
-       FROM registrations
-       ORDER BY registered_at DESC`,
-    )
-    .all<RegistrationRow>();
+  const db = sql();
+  const rows = await db`
+    SELECT id, name, student_id, email, registered_at
+    FROM registrations
+    ORDER BY registered_at DESC
+  `;
 
-  return result.results ?? [];
+  return rows as RegistrationRow[];
 }
 
-export async function countRegistrations() {
+export async function countRegistrations(): Promise<number> {
   await ensureRegistrationSchema();
-  const result = await database()
-    .prepare('SELECT COUNT(*) AS count FROM registrations')
-    .first<{ count: number }>();
+  const db = sql();
+  const rows = await db`SELECT COUNT(*)::int AS count FROM registrations`;
 
-  return Number(result?.count ?? 0);
+  return Number((rows[0] as { count?: number } | undefined)?.count ?? 0);
 }

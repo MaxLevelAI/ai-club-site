@@ -1,24 +1,8 @@
 import { CLUB_CONFIG } from '@/app/config';
-import { chatGPTSignOutPath, requireChatGPTUser } from '@/app/chatgpt-auth';
+import { getAdminCode, isAdminAuthorized } from '@/app/admin-auth';
 import { listRegistrations } from '@/db/registrations';
 
 export const dynamic = 'force-dynamic';
-
-function configuredAdminEmails() {
-  return (process.env.ADMIN_EMAILS ?? '')
-    .split(',')
-    .map((email) => email.trim().toLowerCase())
-    .filter(Boolean);
-}
-
-function isAuthorizedAdmin(email: string) {
-  const normalizedEmail = email.toLowerCase();
-  const configuredEmails = configuredAdminEmails();
-  const localPreviewAdmin =
-    process.env.NODE_ENV !== 'production' && normalizedEmail === 'seedy@sites.test';
-
-  return configuredEmails.includes(normalizedEmail) || localPreviewAdmin;
-}
 
 function formatDate(timestamp: string) {
   return new Intl.DateTimeFormat('en-US', {
@@ -34,22 +18,58 @@ function formatTime(timestamp: string) {
   }).format(new Date(timestamp));
 }
 
-export default async function AdminPage() {
-  const user = await requireChatGPTUser('/admin');
+export default async function AdminPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ error?: string }>;
+}) {
+  if (!(await isAdminAuthorized())) {
+    const { error } = await searchParams;
+    const codeConfigured = getAdminCode() !== null;
+    const showError = error === '1';
 
-  if (!isAuthorizedAdmin(user.email)) {
     return (
       <main className="admin-shell">
         <section className="admin-panel access-panel">
           <p className="admin-kicker">AI CLUB // ORGANIZER</p>
-          <h1>ACCESS NOT AUTHORIZED</h1>
+          <h1>ENTER ACCESS CODE</h1>
           <p>
-            You are signed in as {user.email}, but this address is not on the
-            organizer allowlist.
+            This area shows every student&apos;s registration details. Enter the
+            organizer code to continue.
           </p>
-          <a className="secondary-button admin-link" href={chatGPTSignOutPath('/admin')}>
-            SIGN IN WITH ANOTHER ACCOUNT
-          </a>
+
+          {codeConfigured ? (
+            <form className="admin-login-form" method="post" action="/admin/login">
+              <div className="field-group">
+                <label htmlFor="admin-code">Organizer code</label>
+                <input
+                  id="admin-code"
+                  name="code"
+                  type="password"
+                  autoComplete="current-password"
+                  placeholder="Access code"
+                  aria-invalid={showError}
+                  aria-describedby={showError ? 'admin-code-error' : undefined}
+                  autoFocus
+                  required
+                />
+                {showError && (
+                  <p className="field-error" id="admin-code-error" role="alert">
+                    Incorrect code. Please try again.
+                  </p>
+                )}
+              </div>
+              <button className="primary-button" type="submit">
+                <span>UNLOCK</span>
+                <span aria-hidden="true">→</span>
+              </button>
+            </form>
+          ) : (
+            <p className="field-error" role="alert">
+              The organizer code has not been set up yet. Add an ADMIN_CODE value
+              in the site settings to enable access.
+            </p>
+          )}
         </section>
       </main>
     );
@@ -66,7 +86,11 @@ export default async function AdminPage() {
             <h1>REGISTRATIONS</h1>
             <p>{registrations.length} student{registrations.length === 1 ? '' : 's'} registered</p>
           </div>
-          <a href={chatGPTSignOutPath('/')} className="admin-signout">SIGN OUT</a>
+          <form method="post" action="/admin/logout">
+            <button type="submit" className="admin-signout admin-signout-button">
+              SIGN OUT
+            </button>
+          </form>
         </header>
 
         {registrations.length ? (
