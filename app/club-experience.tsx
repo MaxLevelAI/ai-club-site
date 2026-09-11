@@ -122,13 +122,6 @@ function createSessionKey() {
   return `${Date.now()}-${Math.random().toString(36).slice(2)}-${Math.random().toString(36).slice(2)}`;
 }
 
-async function requestRegistrationCount() {
-  const response = await fetch('/api/registration-count', { cache: 'no-store' });
-  if (!response.ok) throw new Error('Registration count is unavailable.');
-  const result = (await response.json()) as { count?: number };
-  return typeof result.count === 'number' ? result.count : 0;
-}
-
 function FoodHighlight({
   className = '',
   message = 'LIGHT SNACKS PROVIDED.',
@@ -345,10 +338,6 @@ export default function ClubExperience() {
   const [signupOpen, setSignupOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [isIOS, setIsIOS] = useState(false);
-  const [registrationCount, setRegistrationCount] = useState<number>(
-    CLUB_CONFIG.preExistingRegistrationCount,
-  );
-  const [countLoading, setCountLoading] = useState(false);
 
   useEffect(() => {
     const resetRequested =
@@ -404,32 +393,6 @@ export default function ClubExperience() {
     elements.forEach((element) => observer.observe(element));
     return () => observer.disconnect();
   }, []);
-
-  useEffect(() => {
-    let active = true;
-    setCountLoading(true);
-    requestRegistrationCount()
-      .then((count) => {
-        if (active) setRegistrationCount(count);
-      })
-      .catch(() => undefined)
-      .finally(() => {
-        if (active) setCountLoading(false);
-      });
-
-    return () => {
-      active = false;
-    };
-  }, []);
-
-  const refreshRegistrationCount = async () => {
-    setCountLoading(true);
-    try {
-      setRegistrationCount(await requestRegistrationCount());
-    } finally {
-      setCountLoading(false);
-    }
-  };
 
   const openSignup = () => {
     setSignupOpen(true);
@@ -497,7 +460,6 @@ export default function ClubExperience() {
       );
       setSignupOpen(false);
       setRegistered(true);
-      void refreshRegistrationCount();
     } catch (registrationError) {
       setError(
         registrationError instanceof Error
@@ -655,24 +617,6 @@ export default function ClubExperience() {
               className="food-card--confirmation"
               message="LIGHT SNACKS PROVIDED."
             />
-
-            <button
-              className="registration-count-button"
-              type="button"
-              onClick={refreshRegistrationCount}
-              disabled={countLoading}
-              aria-label="Refresh the number of people registered"
-            >
-              <span className="registration-count-number">
-                {registrationCount}
-              </span>
-              <span className="registration-count-label">
-                {registrationCount === 1 ? 'PERSON REGISTERED' : 'PEOPLE REGISTERED'}
-              </span>
-              <span className="registration-count-refresh" aria-hidden="true">
-                {countLoading ? '…' : '↻'}
-              </span>
-            </button>
 
             <LocationCard
               headingId="location-title"
