@@ -46,7 +46,6 @@ export async function POST(request: Request) {
 
   const candidate = body as {
     name?: unknown;
-    studentId?: unknown;
     email?: unknown;
     sessionKey?: unknown;
   };
@@ -56,19 +55,12 @@ export async function POST(request: Request) {
   const sessionKey = typeof candidate.sessionKey === 'string'
     ? candidate.sessionKey
     : '';
-  const studentId = typeof candidate.studentId === 'string'
-    ? candidate.studentId.trim()
-    : '';
   const email = typeof candidate.email === 'string'
     ? candidate.email.trim().toLowerCase()
     : '';
 
   if (!name || name.length > 100 || /[\u0000-\u001F\u007F]/.test(name)) {
     return json({ error: 'Please enter a valid name.' }, 400);
-  }
-
-  if (!/^\d{4,20}$/.test(studentId)) {
-    return json({ error: 'Please enter a valid 480 number.' }, 400);
   }
 
   if (email.length > 254 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
@@ -80,7 +72,7 @@ export async function POST(request: Request) {
   }
 
   try {
-    const result = await saveRegistration(name, studentId, email, sessionKey);
+    const result = await saveRegistration(name, email, sessionKey);
     return json({ ok: true, created: result.created }, result.created ? 201 : 200);
   } catch (error) {
     console.error('Registration save failed', error);

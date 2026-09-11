@@ -331,7 +331,6 @@ export default function ClubExperience() {
   const registrationSectionRef = useRef<HTMLElement>(null);
   const confirmationSectionRef = useRef<HTMLElement>(null);
   const [name, setName] = useState('');
-  const [studentId, setStudentId] = useState('');
   const [email, setEmail] = useState('');
   const [error, setError] = useState('');
   const [registered, setRegistered] = useState(false);
@@ -414,10 +413,9 @@ export default function ClubExperience() {
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const normalizedName = name.trim().replace(/\s+/g, ' ');
-    const normalizedStudentId = studentId.trim();
     const normalizedEmail = email.trim().toLowerCase();
 
-    if (!normalizedName || !normalizedStudentId || !normalizedEmail) {
+    if (!normalizedName || !normalizedEmail) {
       setError('Please complete all fields.');
       return;
     }
@@ -442,7 +440,6 @@ export default function ClubExperience() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           name: normalizedName,
-          studentId: normalizedStudentId,
           email: normalizedEmail,
           sessionKey,
         }),
@@ -561,25 +558,6 @@ export default function ClubExperience() {
                         disabled={submitting}
                       />
                       <p className="field-error" id="name-error" role="alert">{error}</p>
-                    </div>
-
-                    <div className="field-group">
-                      <label htmlFor="student-id">Your 480 number</label>
-                      <input
-                        id="student-id"
-                        name="studentId"
-                        type="text"
-                        inputMode="numeric"
-                        autoComplete="off"
-                        pattern="[0-9]*"
-                        placeholder="480 Number"
-                        value={studentId}
-                        onChange={(event) => setStudentId(event.target.value.replace(/\D/g, ''))}
-                        aria-describedby={error ? 'name-error' : undefined}
-                        aria-invalid={Boolean(error)}
-                        maxLength={20}
-                        disabled={submitting}
-                      />
                     </div>
 
                     <div className="field-group">

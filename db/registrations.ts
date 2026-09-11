@@ -3,7 +3,6 @@ import { neon } from '@neondatabase/serverless';
 export type RegistrationRow = {
   id: number;
   name: string;
-  student_id: string | null;
   email: string | null;
   registered_at: string;
 };
@@ -75,15 +74,14 @@ export function ensureRegistrationSchema() {
 
 export async function saveRegistration(
   name: string,
-  studentId: string,
   email: string,
   sessionKey: string,
 ) {
   await ensureRegistrationSchema();
   const db = sql();
   const inserted = await db`
-    INSERT INTO registrations (name, student_id, email, session_key, registered_at)
-    VALUES (${name}, ${studentId}, ${email}, ${sessionKey}, ${new Date().toISOString()})
+    INSERT INTO registrations (name, email, session_key, registered_at)
+    VALUES (${name}, ${email}, ${sessionKey}, ${new Date().toISOString()})
     ON CONFLICT (session_key) DO NOTHING
     RETURNING id
   `;
@@ -95,7 +93,7 @@ export async function listRegistrations(): Promise<RegistrationRow[]> {
   await ensureRegistrationSchema();
   const db = sql();
   const rows = await db`
-    SELECT id, name, student_id, email, registered_at
+    SELECT id, name, email, registered_at
     FROM registrations
     ORDER BY registered_at DESC
   `;
