@@ -86,11 +86,20 @@ export default async function AdminPage({
             <h1>REGISTRATIONS</h1>
             <p>{registrations.length} student{registrations.length === 1 ? '' : 's'} registered</p>
           </div>
-          <form method="post" action="/admin/logout">
-            <button type="submit" className="admin-signout admin-signout-button">
-              SIGN OUT
-            </button>
-          </form>
+          <div className="admin-actions">
+            {registrations.length > 0 && (
+              <form method="post" action="/admin/clear">
+                <button type="submit" className="registration-clear">
+                  CLEAR ALL
+                </button>
+              </form>
+            )}
+            <form method="post" action="/admin/logout">
+              <button type="submit" className="admin-signout admin-signout-button">
+                SIGN OUT
+              </button>
+            </form>
+          </div>
         </header>
 
         {registrations.length ? (

@@ -89,9 +89,9 @@ function DigitalRain() {
   return <canvas ref={canvasRef} className="digital-rain" aria-hidden="true" />;
 }
 
-const LOCAL_REGISTRATION_KEY = 'ai-club-registration';
-const SESSION_KEY = 'ai-club-session-key';
-const SESSION_SUBMITTED_KEY = 'ai-club-session-submitted';
+const LOCAL_REGISTRATION_KEY = `ai-club-registration:${CLUB_CONFIG.eventDate}`;
+const SESSION_KEY = `ai-club-session-key:${CLUB_CONFIG.eventDate}`;
+const SESSION_SUBMITTED_KEY = `ai-club-session-submitted:${CLUB_CONFIG.eventDate}`;
 
 function isConfigured(value: string) {
   return !value.endsWith('_TO_BE_ADDED');
@@ -124,7 +124,7 @@ function createSessionKey() {
 
 function FoodHighlight({
   className = '',
-  message = 'LIGHT SNACKS PROVIDED.',
+  message = 'FOOD PROVIDED.',
 }: {
   className?: string;
   message?: string;
@@ -593,7 +593,7 @@ export default function ClubExperience() {
 
             <FoodHighlight
               className="food-card--confirmation"
-              message="LIGHT SNACKS PROVIDED."
+              message="FOOD PROVIDED."
             />
 
             <LocationCard

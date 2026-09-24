@@ -1118,6 +1118,14 @@ h1 {
   cursor: pointer;
 }
 
+.admin-actions {
+  display: flex;
+  flex: none;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 14px;
+}
+
 .admin-login-form {
   display: grid;
   gap: 18px;
@@ -1151,6 +1159,23 @@ h1 {
 }
 
 .registration-remove:hover {
+  border-color: #ff7474;
+  color: #ffbaba;
+}
+
+.registration-clear {
+  background: rgba(255, 116, 116, 0.1);
+  border: 1px solid rgba(255, 116, 116, 0.5);
+  color: #ff9a9a;
+  border-radius: 999px;
+  padding: 7px 14px;
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 0.62rem;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+}
+
+.registration-clear:hover {
   border-color: #ff7474;
   color: #ffbaba;
 }

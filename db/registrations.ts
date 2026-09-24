@@ -107,6 +107,12 @@ export async function deleteRegistration(id: number): Promise<void> {
   await db`DELETE FROM registrations WHERE id = ${id}`;
 }
 
+export async function deleteAllRegistrations(): Promise<void> {
+  await ensureRegistrationSchema();
+  const db = sql();
+  await db`DELETE FROM registrations`;
+}
+
 export async function countRegistrations(): Promise<number> {
   await ensureRegistrationSchema();
   const db = sql();
