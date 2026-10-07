@@ -1,8 +1,8 @@
 export const CLUB_CONFIG = {
   clubName: 'AI CLUB',
   subtitle: 'FOR STUDENT SUCCESS',
-  eventDate: 'Tuesday, September 29, 2026',
-  eventTime: 'After School · 2:40–3:40 PM',
+  eventDate: 'Tuesday, October 13, 2026',
+  eventTime: 'After School · 3:00–4:00 PM',
   venueName: 'Hawkers',
   venueArea: 'The Grove',
   venueDescription: 'Right next to Chipotle.',
